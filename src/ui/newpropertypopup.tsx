@@ -12,6 +12,7 @@ import { getDefaultValueFromType, getEditableFromType, getEditableTypes } from "
 import { defaultMetadata } from "./../metaprovider";
 import Padding from "./padding";
 import ToolTip from "./tooltip";
+import EditableField from "./editable";
 
 const studio = (settings().Studio as unknown) as { Theme: StudioTheme };
 const theme = studio.Theme;
@@ -82,38 +83,18 @@ class NewPropertyPopup extends Roact.Component<NewPropertyPopupProps, NewPropert
         }
 
         return (
-            <frame
-                Key={"EditableField"}
-                Size={new UDim2(1, 0, StudioTextBox.HeightUDim.Scale, StudioTextBox.HeightUDim.Offset + 10)}
-                BackgroundTransparency={1}
-                LayoutOrder={2}
-            >
-                <uilistlayout
-                    FillDirection={Enum.FillDirection.Horizontal}
-                    HorizontalAlignment={Enum.HorizontalAlignment.Left}
-                    VerticalAlignment={Enum.VerticalAlignment.Center}
-                    SortOrder={Enum.SortOrder.LayoutOrder}
-                />
-
-                <StudioTextLabel
-                    Key={"FieldLabel"}
-                    LayoutOrder={0}
-                    Text="Value"
-                    TextXAlignment={Enum.TextXAlignment.Left}
-                    Width={new UDim(0.5, 0)}
-                />
-
-                {getEditableFromType(
-                    type,
-                    getDefaultValueFromType(type),
-                    (newVal) => {
-                        this.setState({
-                            newValue: newVal,
-                        });
-                    },
-                    defaultMetadata,
-                )}
-            </frame>
+            <EditableField
+                Label="Value"
+                LayoutOrder={3}
+                InitialValue={getDefaultValueFromType(type)}
+                Type={type}
+                Meta={defaultMetadata}
+                OnValueChanged={(newValue) => {
+                    this.setState({
+                        newValue: newValue,
+                    });
+                }}
+            />
         );
     }
 

@@ -3,11 +3,13 @@ import { StudioScrollingFrame, StudioTextLabel } from "@rbxts/roact-studio-compo
 import { TextService } from "@rbxts/services";
 import { IEditableMeta } from "metaprovider";
 import store, { createChangeTooltipAction, createNewMousePos } from "rodux";
-import { resolveEditable } from "./editables";
+import { getEditableFromType, ValueChangedCallback } from "./editables";
 
 export interface EditableFieldProps {
     Label: string;
-    ValueInstance: ValueBase;
+    Type: ValueBase["ClassName"];
+    InitialValue: unknown;
+    OnValueChanged: ValueChangedCallback;
     Meta: IEditableMeta;
     LayoutOrder: number;
 }
@@ -25,7 +27,6 @@ export default class EditableField extends Roact.Component<EditableFieldProps, E
                 LayoutOrder={this.props.LayoutOrder}
                 Event={{
                     MouseEnter: (f, x, y) => {
-                        print("enter");
                         if (this.props.Meta.Description !== undefined) {
                             store.dispatch(createChangeTooltipAction(this.props.Meta.Description));
                             store.dispatch(createNewMousePos(new Vector2(x, y)));
@@ -56,7 +57,12 @@ export default class EditableField extends Roact.Component<EditableFieldProps, E
                     Width={new UDim(0.5, 0)}
                 />
 
-                {resolveEditable(this.props.ValueInstance, this.props.Meta)}
+                {getEditableFromType(
+                    this.props.Type,
+                    this.props.InitialValue,
+                    this.props.OnValueChanged,
+                    this.props.Meta,
+                )}
             </frame>
         );
     }

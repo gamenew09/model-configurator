@@ -2,9 +2,9 @@ import Roact from "@rbxts/roact";
 import { IEditableMeta } from "metaprovider";
 import { t } from "@rbxts/t";
 
-type ValueChangedCallback = (newVal: unknown) => void;
+export type ValueChangedCallback = (newVal: unknown) => void;
 
-type EditableFactory = (
+export type EditableFactory = (
     initialValue: unknown,
     onValueChanged: ValueChangedCallback,
     meta: IEditableMeta,
@@ -79,15 +79,4 @@ export function getEditableFromType(
         warn(`Could not find editable for ${typeName}`);
         return undefined;
     }
-}
-
-export function resolveEditable(value: ValueBase, meta: IEditableMeta): Roact.Element | undefined {
-    return getEditableFromType(
-        value.ClassName,
-        value.Value,
-        (newVal) => {
-            value.Value = newVal;
-        },
-        meta,
-    );
 }

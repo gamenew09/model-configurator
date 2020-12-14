@@ -49,7 +49,11 @@ class ConfiguratorPanel extends Roact.Component<ConfiguratorProps, {}> {
                             LayoutOrder={layoutOrderNum}
                             Label={child.Name}
                             Meta={meta}
-                            ValueInstance={child}
+                            Type={child.ClassName}
+                            InitialValue={child.Value}
+                            OnValueChanged={(newVal) => {
+                                child.Value = newVal;
+                            }}
                         />,
                     );
                     layoutOrderNum++;
