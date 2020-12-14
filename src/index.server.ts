@@ -25,8 +25,8 @@ Selection.SelectionChanged.Connect(() => {
     });
 });
 
-const toolbar = plugin.CreateToolbar("MyToolbar");
-const button = toolbar.CreateButton("MyButton", "", "");
+const toolbar = plugin.CreateToolbar("Model Configurator");
+const button = toolbar.CreateButton("Model Configurator Dock", "", "");
 
 const minSize = new Vector2(200, 200);
 
