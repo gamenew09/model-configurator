@@ -41,6 +41,14 @@ for (const factoryModuleScript of script.GetChildren()) {
 
 //
 
+export function getEditableTypes(): ValueBase["ClassName"][] {
+    const types: ValueBase["ClassName"][] = [];
+    map.forEach((v, k) => {
+        types.push(k);
+    });
+    return types;
+}
+
 export default function resolveEditable(value: ValueBase, meta: IEditableMeta): Roact.Element | undefined {
     const factory = map.get(value.ClassName);
     if (factory !== undefined) {

@@ -1,12 +1,23 @@
 import Roact from "@rbxts/roact";
+import RoactRodux from "@rbxts/roact-rodux";
 import { StudioFrame, StudioTextLabel, StudioToggle } from "@rbxts/roact-studio-components";
+import { MainStore, MainStoreActions } from "rodux";
 import ConfiguratorPanel from "./configurator";
+import NewPropertyPopup from "./newpropertypopup";
 import ToolTip from "./tooltip";
 
 const studio = (settings().Studio as unknown) as { Theme: StudioTheme };
 const theme = studio.Theme;
 
-export default class MainUI extends Roact.Component<{}, {}> {
+interface MainUIStateProps {
+    readonly isNewPropertyPopupVisible: boolean;
+}
+
+interface MainUIDispatchProps {}
+
+interface MainUIProps extends MainUIStateProps, MainUIDispatchProps {}
+
+class MainUI extends Roact.Component<MainUIProps, {}> {
     render(): Roact.Element {
         return (
             <frame
@@ -23,8 +34,14 @@ export default class MainUI extends Roact.Component<{}, {}> {
                 Size={new UDim2(1, 0, 1, 0)}
                 Visible={true}
             >
+                <NewPropertyPopup />
                 <ToolTip />
-                <frame BackgroundTransparency={1} Size={new UDim2(1, 0, 1, 0)} Position={new UDim2()}>
+                <frame
+                    Visible={!this.props.isNewPropertyPopupVisible}
+                    BackgroundTransparency={1}
+                    Size={new UDim2(1, 0, 1, 0)}
+                    Position={new UDim2()}
+                >
                     <uilistlayout
                         FillDirection={Enum.FillDirection.Vertical}
                         HorizontalAlignment={Enum.HorizontalAlignment.Center}
@@ -46,3 +63,10 @@ export default class MainUI extends Roact.Component<{}, {}> {
         );
     }
 }
+
+const mapStateToProps = (state: MainStore): MainUIStateProps => ({
+    isNewPropertyPopupVisible: state.newPropertyVisible,
+});
+const mapDispatchToProps = (dispatch: Rodux.Dispatch<MainStoreActions>): MainUIDispatchProps => ({});
+
+export default RoactRodux.connect(mapStateToProps, mapDispatchToProps)(MainUI);

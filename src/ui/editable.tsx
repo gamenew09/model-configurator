@@ -9,6 +9,7 @@ export interface EditableFieldProps {
     Label: string;
     ValueInstance: ValueBase;
     Meta: IEditableMeta;
+    LayoutOrder: number;
 }
 
 export interface EditableFieldState {}
@@ -21,6 +22,7 @@ export default class EditableField extends Roact.Component<EditableFieldProps, E
                 Key={"EditableField"}
                 Size={new UDim2(1, 0, textLabelHeight.Scale, textLabelHeight.Offset + 10)}
                 BackgroundTransparency={1}
+                LayoutOrder={this.props.LayoutOrder}
                 Event={{
                     MouseEnter: (f, x, y) => {
                         print("enter");

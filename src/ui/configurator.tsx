@@ -1,8 +1,8 @@
 import Roact from "@rbxts/roact";
 import RoactRodux from "@rbxts/roact-rodux";
-import { StudioTextLabel } from "@rbxts/roact-studio-components";
+import { StudioImageButton, StudioTextButton, StudioTextLabel } from "@rbxts/roact-studio-components";
 import metaprovider from "metaprovider";
-import { MainStore, MainStoreActions } from "rodux";
+import { createSetNewPropertyVisibilityAction, MainStore, MainStoreActions } from "rodux";
 import EditableField from "./editable";
 
 const studio = (settings().Studio as unknown) as { Theme: StudioTheme };
@@ -10,9 +10,12 @@ const theme = studio.Theme;
 
 interface ConfiguratorStateProps {
     readonly selection: Instance | undefined;
+    readonly isNewPropertyPopupVisible: boolean;
 }
 
-interface ConfiguratorDispatchProps {}
+interface ConfiguratorDispatchProps {
+    setPropertyCreatorVisibility: (visible: boolean) => void;
+}
 
 interface ConfiguratorProps extends ConfiguratorStateProps, ConfiguratorDispatchProps {}
 
@@ -33,15 +36,40 @@ class ConfiguratorPanel extends Roact.Component<ConfiguratorProps, {}> {
             />,
         ];
 
+        let layoutOrderNum = 0;
+
         const selection = this.props.selection;
         if (selection !== undefined) {
             const children = selection.GetChildren();
             for (const child of children) {
                 if (child.IsA("ValueBase")) {
                     const meta = metaprovider.getMetadataFromValue(child);
-                    listOfElements.push(<EditableField Label={child.Name} Meta={meta} ValueInstance={child} />);
+                    listOfElements.push(
+                        <EditableField
+                            LayoutOrder={layoutOrderNum}
+                            Label={child.Name}
+                            Meta={meta}
+                            ValueInstance={child}
+                        />,
+                    );
+                    layoutOrderNum++;
                 }
             }
+            listOfElements.push(
+                <StudioTextButton
+                    Text={"New Property"}
+                    Width={new UDim(0.95, 0)}
+                    Events={{
+                        MouseButton1Click: () => {
+                            if (!this.props.isNewPropertyPopupVisible) {
+                                this.props.setPropertyCreatorVisibility(true);
+                            }
+                        },
+                    }}
+                    Active={!this.props.isNewPropertyPopupVisible}
+                    LayoutOrder={layoutOrderNum}
+                />,
+            );
         } else {
             listOfElements.push(
                 <StudioTextLabel
@@ -78,7 +106,12 @@ class ConfiguratorPanel extends Roact.Component<ConfiguratorProps, {}> {
 
 const mapStateToProps = (state: MainStore): ConfiguratorStateProps => ({
     selection: state.selection,
+    isNewPropertyPopupVisible: state.newPropertyVisible,
 });
-const mapDispatchToProps = (dispatch: Rodux.Dispatch<MainStoreActions>): ConfiguratorDispatchProps => ({});
+const mapDispatchToProps = (dispatch: Rodux.Dispatch<MainStoreActions>): ConfiguratorDispatchProps => ({
+    setPropertyCreatorVisibility: (visible) => {
+        dispatch(createSetNewPropertyVisibilityAction(visible));
+    },
+});
 
 export default RoactRodux.connect(mapStateToProps, mapDispatchToProps)(ConfiguratorPanel);
