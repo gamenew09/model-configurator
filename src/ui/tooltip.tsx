@@ -23,6 +23,10 @@ class ToolTip extends Roact.Component<ToolTipProps> {
         super(p);
     }
 
+    protected isTooltipVisible(): boolean {
+        return this.props.tooltipText !== undefined && this.props.tooltipText.size() > 0;
+    }
+
     render(): Roact.Element {
         print(`update ${this.props.tooltipText !== undefined && this.props.tooltipText.size() > 0}`);
 
@@ -43,7 +47,7 @@ class ToolTip extends Roact.Component<ToolTipProps> {
                 TextSize={10}
                 AnchorPoint={new Vector2(0, 1)}
                 Text={this.props.tooltipText}
-                Visible={this.props.tooltipText !== undefined && this.props.tooltipText.size() > 0}
+                Visible={this.isTooltipVisible()}
                 Size={new UDim2(0, size.X, 0, size.Y)}
                 Position={new UDim2(0, pos.X, 0, pos.Y)}
                 TextWrapped={true}
