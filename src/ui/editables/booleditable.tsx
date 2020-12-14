@@ -3,7 +3,8 @@ import { StudioTextBox, StudioToggle } from "@rbxts/roact-studio-components";
 import { IEditableMeta } from "metaprovider";
 
 interface EditableProps {
-    ValueInstance: BoolValue;
+    StartValue: boolean;
+    OnValueChanged: (newVal: boolean) => void;
 }
 
 interface EditableState {
@@ -15,7 +16,7 @@ export class BoolEditable extends Roact.Component<EditableProps, EditableState> 
         super(p);
 
         this.state = {
-            currentValue: p.ValueInstance.Value,
+            currentValue: p.StartValue,
         };
     }
 
@@ -23,7 +24,7 @@ export class BoolEditable extends Roact.Component<EditableProps, EditableState> 
         return (
             // TODO: Convert from StudioToggle to custom toggle button (the StudioToggle button has broken visuals but works)
             <StudioToggle
-                Key={"BoolEditable_" + this.props.ValueInstance.Name}
+                Key={"BoolEditable"}
                 IsOnByDefault={this.state.currentValue}
                 LayoutOrder={1}
                 Active={true}
@@ -33,7 +34,7 @@ export class BoolEditable extends Roact.Component<EditableProps, EditableState> 
                             currentValue: isOn,
                         });
 
-                        this.props.ValueInstance.Value = isOn;
+                        this.props.OnValueChanged(isOn);
                     },
                 }}
             />
@@ -41,10 +42,10 @@ export class BoolEditable extends Roact.Component<EditableProps, EditableState> 
     }
 }
 
-function factory(value: ValueBase, meta: IEditableMeta): Roact.Element {
-    assert(value.ClassName === "BoolValue", "value passed must be a BoolValue");
+function factory(initialValue: boolean, onValueChanged: (newVal: unknown) => void, meta: IEditableMeta): Roact.Element {
+    assert(typeIs(initialValue, "boolean"), "initialValue must be a boolean");
 
-    return <BoolEditable ValueInstance={value as BoolValue} />;
+    return <BoolEditable StartValue={initialValue} OnValueChanged={onValueChanged} />;
 }
 
 export default {
@@ -52,5 +53,5 @@ export default {
     Factory: factory,
 } as {
     Type: ValueBase["ClassName"];
-    Factory: (value: ValueBase, meta: IEditableMeta) => Roact.Element;
+    Factory: (initialValue: unknown, onValueChanged: (newVal: unknown) => void, meta: IEditableMeta) => Roact.Element;
 };

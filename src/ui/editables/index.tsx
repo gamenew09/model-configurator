@@ -2,7 +2,11 @@ import Roact from "@rbxts/roact";
 import { IEditableMeta } from "metaprovider";
 import { t } from "@rbxts/t";
 
-type EditableFactory = (value: ValueBase, meta: IEditableMeta) => Roact.Element;
+type EditableFactory = (
+    initialValue: unknown,
+    onValueChanged: (newVal: unknown) => void,
+    meta: IEditableMeta,
+) => Roact.Element;
 
 const map = new Map<ValueBase["ClassName"], EditableFactory>();
 
@@ -52,7 +56,13 @@ export function getEditableTypes(): ValueBase["ClassName"][] {
 export default function resolveEditable(value: ValueBase, meta: IEditableMeta): Roact.Element | undefined {
     const factory = map.get(value.ClassName);
     if (factory !== undefined) {
-        return factory(value, meta);
+        return factory(
+            value.Value,
+            (newVal) => {
+                value.Value = newVal;
+            },
+            meta,
+        );
     } else {
         warn(`Could not find editable for ${value.ClassName}`);
         return undefined;
