@@ -6,11 +6,6 @@ on:
 
 name: Release CI
 
-on:
-  push:
-    branches:
-      - master
-
 jobs:
   ci:
     name: CI and Upload
