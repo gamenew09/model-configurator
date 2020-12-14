@@ -3,7 +3,7 @@ import { StudioScrollingFrame, StudioTextLabel } from "@rbxts/roact-studio-compo
 import { TextService } from "@rbxts/services";
 import { IEditableMeta } from "metaprovider";
 import store, { createChangeTooltipAction, createNewMousePos } from "rodux";
-import resolveEditable from "./editables";
+import { resolveEditable } from "./editables";
 
 export interface EditableFieldProps {
     Label: string;

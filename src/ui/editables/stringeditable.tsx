@@ -52,8 +52,10 @@ function factory(initialValue: string, onValueChanged: (newVal: unknown) => void
 
 export default {
     Type: "StringValue",
+    DefaultValue: "",
     Factory: factory,
 } as {
     Type: ValueBase["ClassName"];
+    DefaultValue: string;
     Factory: (initialValue: unknown, onValueChanged: (newVal: unknown) => void, meta: IEditableMeta) => Roact.Element;
 };

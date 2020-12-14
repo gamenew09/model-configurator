@@ -25,6 +25,10 @@ const providers: IMetaProvider[] = [];
 
 providers.push(new ValueMetaProvider());
 
+export const defaultMetadata: IEditableMeta = {
+    Description: undefined,
+};
+
 export default {
     getMetadataFromValue: (v: ValueBase): IEditableMeta => {
         for (const provider of providers) {
@@ -34,8 +38,6 @@ export default {
             }
         }
 
-        return {
-            Description: undefined,
-        };
+        return defaultMetadata;
     },
 };

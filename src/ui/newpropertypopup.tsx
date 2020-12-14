@@ -8,7 +8,8 @@ import {
     StudioToggle,
 } from "@rbxts/roact-studio-components";
 import { createSetNewPropertyVisibilityAction, MainStore, MainStoreActions } from "rodux";
-import { getEditableTypes } from "./editables";
+import { getDefaultValueFromType, getEditableFromType, getEditableTypes } from "./editables";
+import { defaultMetadata } from "./../metaprovider";
 import Padding from "./padding";
 import ToolTip from "./tooltip";
 
@@ -29,6 +30,7 @@ interface NewPropertyPopupProps extends NewPropertyPopupStateProps, NewPropertyP
 interface NewPropertyPopupState {
     propName: string;
     selectedValueType?: ValueBase["ClassName"];
+    newValue: unknown;
 }
 
 const NewPropertyPopup_ZIndex = 1000;
@@ -39,6 +41,7 @@ class NewPropertyPopup extends Roact.Component<NewPropertyPopupProps, NewPropert
 
         this.state = {
             propName: "",
+            newValue: undefined,
         };
     }
 
@@ -70,6 +73,48 @@ class NewPropertyPopup extends Roact.Component<NewPropertyPopupProps, NewPropert
             i++;
         }
         return eles;
+    }
+
+    protected getEditableValueFrame(): Roact.Element | undefined {
+        const type = this.state.selectedValueType;
+        if (type === undefined) {
+            return undefined;
+        }
+
+        return (
+            <frame
+                Key={"EditableField"}
+                Size={new UDim2(1, 0, StudioTextBox.HeightUDim.Scale, StudioTextBox.HeightUDim.Offset + 10)}
+                BackgroundTransparency={1}
+                LayoutOrder={2}
+            >
+                <uilistlayout
+                    FillDirection={Enum.FillDirection.Horizontal}
+                    HorizontalAlignment={Enum.HorizontalAlignment.Left}
+                    VerticalAlignment={Enum.VerticalAlignment.Center}
+                    SortOrder={Enum.SortOrder.LayoutOrder}
+                />
+
+                <StudioTextLabel
+                    Key={"FieldLabel"}
+                    LayoutOrder={0}
+                    Text="Value"
+                    TextXAlignment={Enum.TextXAlignment.Left}
+                    Width={new UDim(0.5, 0)}
+                />
+
+                {getEditableFromType(
+                    type,
+                    getDefaultValueFromType(type),
+                    (newVal) => {
+                        this.setState({
+                            newValue: newVal,
+                        });
+                    },
+                    defaultMetadata,
+                )}
+            </frame>
+        );
     }
 
     render(): Roact.Element {
@@ -146,6 +191,8 @@ class NewPropertyPopup extends Roact.Component<NewPropertyPopupProps, NewPropert
                     />
                 </frame>
 
+                {this.getEditableValueFrame()}
+
                 <frame
                     BackgroundTransparency={1}
                     Size={new UDim2(0.65, 0, StudioTextButton.HeightUDim.Scale, StudioTextButton.HeightUDim.Offset * 5)}
@@ -185,8 +232,15 @@ class NewPropertyPopup extends Roact.Component<NewPropertyPopupProps, NewPropert
                                     const newVal = new Instance(this.state.selectedValueType);
                                     newVal.Name = this.state.propName;
                                     newVal.Parent = selection;
+                                    newVal.Value = this.state.newValue;
 
                                     this.props.updateVisiblity(false);
+
+                                    this.setState({
+                                        selectedValueType: Roact.None,
+                                        newValue: Roact.None,
+                                        propName: "",
+                                    });
                                 }
                             },
                         }}
@@ -198,6 +252,12 @@ class NewPropertyPopup extends Roact.Component<NewPropertyPopupProps, NewPropert
                         Events={{
                             MouseButton1Click: () => {
                                 this.props.updateVisiblity(false);
+
+                                this.setState({
+                                    selectedValueType: Roact.None,
+                                    newValue: Roact.None,
+                                    propName: "",
+                                });
                             },
                         }}
                     />

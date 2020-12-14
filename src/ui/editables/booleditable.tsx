@@ -50,8 +50,10 @@ function factory(initialValue: boolean, onValueChanged: (newVal: unknown) => voi
 
 export default {
     Type: "BoolValue",
+    DefaultValue: false,
     Factory: factory,
 } as {
     Type: ValueBase["ClassName"];
+    DefaultValue: boolean;
     Factory: (initialValue: unknown, onValueChanged: (newVal: unknown) => void, meta: IEditableMeta) => Roact.Element;
 };
