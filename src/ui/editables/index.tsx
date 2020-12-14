@@ -1,6 +1,6 @@
 import Roact from "@rbxts/roact";
 import { IEditableMeta } from "metaprovider";
-import { t } from "../../timporter";
+import { t } from "@rbxts/t";
 
 type EditableFactory = (value: ValueBase, meta: IEditableMeta) => Roact.Element;
 
