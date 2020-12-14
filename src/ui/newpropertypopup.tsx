@@ -117,10 +117,16 @@ class NewPropertyPopup extends Roact.Component<NewPropertyPopupProps, NewPropert
         );
     }
 
+    protected isCreateActive(): boolean {
+        return this.state.selectedValueType !== undefined && this.state.propName.size() > 0;
+    }
+
     render(): Roact.Element {
         if (this.props.Selection === undefined && this.props.Visible === true) {
             this.props.updateVisiblity(false);
         }
+
+        const createActive = this.isCreateActive();
 
         return (
             <frame
@@ -223,13 +229,17 @@ class NewPropertyPopup extends Roact.Component<NewPropertyPopupProps, NewPropert
                     <StudioTextButton
                         Width={new UDim(0.4, 0)}
                         Text="Create"
+                        Active={createActive}
+                        BackgroundColorEnum={
+                            createActive ? Enum.StudioStyleGuideColor.Button : Enum.StudioStyleGuideColor.Dark
+                        }
                         Events={{
                             MouseButton1Click: () => {
-                                if (this.state.selectedValueType !== undefined && this.state.propName.size() > 0) {
+                                if (createActive) {
                                     const selection = this.props.Selection!;
                                     assert(selection !== undefined, "Selection is undefined.");
 
-                                    const newVal = new Instance(this.state.selectedValueType);
+                                    const newVal = new Instance(this.state.selectedValueType!);
                                     newVal.Name = this.state.propName;
                                     newVal.Parent = selection;
                                     newVal.Value = this.state.newValue;
